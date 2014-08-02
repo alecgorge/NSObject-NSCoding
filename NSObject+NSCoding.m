@@ -24,7 +24,13 @@
         NSString *pname = [NSString stringWithCString:property_getName(property) encoding:NSUTF8StringEncoding];
         NSString *pattrs = [NSString stringWithCString:property_getAttributes(property) encoding:NSUTF8StringEncoding];
         
-        pattrs = [[pattrs componentsSeparatedByString:@","] objectAtIndex:0];
+        NSArray *parr = [pattrs componentsSeparatedByString:@","];
+		
+        if ([parr containsObject:@"R"]) {
+        	continue;
+        }
+		
+        pattrs = [parr objectAtIndex:0];
         pattrs = [pattrs substringFromIndex:1];
         
         [results setObject:pattrs forKey:pname];
@@ -79,6 +85,7 @@
                     }
                 }
                 break;
+            case 'B':   // bool for 64bit
             case 'c':   // bool
                 [invocation invoke];
                 [invocation getReturnValue:&boolValue];
@@ -160,6 +167,7 @@
                     }
                 }
                 break;
+            case 'B':   // bool for 64bit
             case 'c':   // bool
                 number = [coder decodeObjectForKey:key];
                 b = [number boolValue];
