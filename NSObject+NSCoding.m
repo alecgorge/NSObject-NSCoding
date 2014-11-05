@@ -25,11 +25,11 @@
         NSString *pattrs = [NSString stringWithCString:property_getAttributes(property) encoding:NSUTF8StringEncoding];
         
         NSArray *parr = [pattrs componentsSeparatedByString:@","];
-		
+        
         if ([parr containsObject:@"R"]) {
-        	continue;
+            continue;
         }
-		
+        
         pattrs = [parr objectAtIndex:0];
         pattrs = [pattrs substringFromIndex:1];
         
@@ -59,11 +59,11 @@
         double doubleValue;
         NSInteger intValue;
         unsigned long ulValue;
-		long longValue;
-		unsigned unsignedValue;
-		short shortValue;
+        long longValue;
+        unsigned unsignedValue;
+        short shortValue;
         NSString *className;
-		
+        
         NSMethodSignature *signature = [self methodSignatureForSelector:NSSelectorFromString(key)];
         NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
         [invocation setSelector:NSSelectorFromString(key)];
@@ -78,7 +78,7 @@
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
                     value = [self performSelector:NSSelectorFromString(key)];
 #pragma clang diagnostic pop
-					
+                    
                     // only decode if the property conforms to NSCoding
                     if([class conformsToProtocol:@protocol(NSCoding)]){
                         [coder encodeObject:value forKey:key];
@@ -117,6 +117,7 @@
                 [coder encodeObject:[NSNumber numberWithUnsignedLongLong:ullValue] forKey:key];
                 break;
             case 'l':   // long
+            case 'q':
                 [invocation invoke];
                 [invocation getReturnValue:&longValue];
                 [coder encodeObject:[NSNumber numberWithLong:longValue] forKey:key];
@@ -149,9 +150,9 @@
         double d;
         unsigned long ul;
         unsigned long long ull;
-		long longValue;
-		unsigned unsignedValue;
-		short shortValue;
+        long longValue;
+        unsigned unsignedValue;
+        short shortValue;
         
         NSString *className;
         
@@ -198,7 +199,8 @@
                 ull = [number unsignedLongLongValue];
                 [self setValue:@(ull) forKey:key];
                 break;
-			case 'l':   // long
+            case 'l':   // long
+            case 'q':
                 number = [coder decodeObjectForKey:key];
                 longValue = [number longValue];
                 [self setValue:@(longValue) forKey:key];
